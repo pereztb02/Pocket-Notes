@@ -104,7 +104,8 @@ const handleNoteDelete = (e) => {
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
   e.preventDefault();
-  activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
+  const noteId = e.target.parentElement.dataset.note;
+  activeNote = { id: noteId };
   renderActiveNote();
 };
 
@@ -171,7 +172,7 @@ const renderNoteList = async (notes) => {
 
   jsonNotes.forEach((note) => {
     const li = createLi(note.title);
-    li.dataset.note = JSON.stringify(note);
+    li.dataset.noteId = note.id;
 
     noteListItems.push(li);
   });
