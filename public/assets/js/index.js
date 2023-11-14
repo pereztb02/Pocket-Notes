@@ -12,7 +12,7 @@ if (window.location.pathname === '/notes') {
   saveNoteBtn = document.querySelector('.save-note');
   newNoteBtn = document.querySelector('.new-note');
   clearBtn = document.querySelector('.clear-btn');
-  noteList = document.querySelectorAll('.list-container .list-group');
+  noteList = document.querySelector('.list-container .list-group');
 }
 
 // Show an element
@@ -103,9 +103,9 @@ const handleNoteDelete = (e) => {
 
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
+  console.log(e.currentTarget.parentElement);
   e.preventDefault();
-  const noteId = e.target.parentElement.dataset.note;
-  activeNote = { id: noteId };
+  activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
   renderActiveNote();
 };
 
@@ -132,7 +132,7 @@ const handleRenderBtns = () => {
 const renderNoteList = async (notes) => {
   let jsonNotes = await notes.json();
   if (window.location.pathname === '/notes') {
-    noteList.forEach((el) => (el.innerHTML = ''));
+    noteList.innerHTML = '';
   }
 
   let noteListItems = [];
@@ -172,13 +172,13 @@ const renderNoteList = async (notes) => {
 
   jsonNotes.forEach((note) => {
     const li = createLi(note.title);
-    li.dataset.noteId = note.id;
+    li.dataset.note = JSON.stringify(note);
 
     noteListItems.push(li);
   });
 
   if (window.location.pathname === '/notes') {
-    noteListItems.forEach((note) => noteList[0].append(note));
+    noteListItems.forEach((note) => noteList.append(note));
   }
 };
 
@@ -190,6 +190,8 @@ if (window.location.pathname === '/notes') {
   newNoteBtn.addEventListener('click', handleNewNoteView);
   clearBtn.addEventListener('click', renderActiveNote);
   noteForm.addEventListener('input', handleRenderBtns);
+  clearBtn.addEventListener('click', renderActiveNote);
+  noteList.addEventListener('click', renderActiveNote);
 }
 
 getAndRenderNotes();

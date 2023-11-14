@@ -3,6 +3,7 @@ const path = require('path');
 const db = require('./db/db.json');
 const app = express();
 const fs = require('fs');
+const {v4:uuidv4} = require('uuid');
 const PORT = 3001;
 
 app.use(express.json());
@@ -38,6 +39,7 @@ app.get('/api/notes/:id', (req, res) => {
 //POST request for notes to db
 app.post('/api/notes', (req, res) => {
     const newNote = req.body;
+    newNote.id = uuidv4()
     db.push(newNote);
 
     fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {
@@ -50,6 +52,21 @@ app.post('/api/notes', (req, res) => {
 });
 });
 
+app.delete('/api/notes/:id', (req, res) => {
+    const noteId = req.params.id;
+    const noteIndex = db.findIndex(note => note.id === noteId);
+    if (noteIndex !== -1) {
+        // Remove the note from the array
+        db.splice(noteIndex, 1);
+    
+        // Respond with a success message
+        res.json({ message: 'Note deleted successfully' });
+      } else {
+        // If the note with the provided ID is not found
+        res.status(404).json({ message: 'Note not found' });
+      }
+    });
+    
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
